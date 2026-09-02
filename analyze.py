@@ -69,7 +69,7 @@ for blk, title in [('A', 'A. 순수 I/O — DB 를 안 건드린다'),
             fmt(med([d['p99'] for d in v])),
             int(med([d['threads'] for d in v])),
             fmt(med([d['connWaitMs'] for d in v])),
-            int(med([d.get('pinned', 0) for d in v]))))
+            int(med([float(d.get('pinned', 0)) for d in v]))))
     w()
 out.close()
 print('조건 %d개 / 실행 %d개 / 버린 실행 %d개' % (len(g), len(ok), len(bad)))
