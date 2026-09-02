@@ -5,6 +5,9 @@ server:
       max: ${LAB_POOL:200}
     accept-count: 10000
     max-connections: 20000
+    # 기본값(100)을 쓴다. -1(무제한)로 바꿔봤더니 VIRTUAL 이 무너졌다 —
+    # 커넥션을 붙잡은 채 가상 스레드가 쌓이면서 캐리어 보상이 256까지 가고
+    # 1 core 에서 스레드 폭증이 일어난다. 근거는 docs/설계.md 수정 3.
 
 spring:
   threads:

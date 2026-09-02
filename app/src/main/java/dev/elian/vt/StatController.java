@@ -47,6 +47,22 @@ public class StatController {
         return m;
     }
 
+    /**
+     * 요청을 실제로 무엇이 처리하는지 확인한다.
+     *
+     * <p>모델 전환이 됐다고 <b>믿고</b> 재면 안 된다. 스레드 이름을 직접 본다.
+     * 가상 스레드는 이름이 없고 {@code isVirtual()} 이 true 다.
+     */
+    @GetMapping("/whoami")
+    public Map<String, Object> whoami() {
+        Thread t = Thread.currentThread();
+        Map<String, Object> m = new LinkedHashMap<>();
+        m.put("virtual", t.isVirtual());
+        m.put("name", t.getName());
+        m.put("platformThreads", threads.getThreadCount());
+        return m;
+    }
+
     @GetMapping("/stat/reset")
     public String reset() {
         threads.resetPeakThreadCount();

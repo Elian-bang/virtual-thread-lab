@@ -51,7 +51,11 @@ public class LoadGen {
             r.ok / (double) runSec, r.ok, r.err,
             pct(sorted, 50), pct(sorted, 95), pct(sorted, 99),
             get(http, base + "/stat"));
+        if (r.err > 0) System.out.println("FIRSTERR " + FIRST_ERR.get());
     }
+
+    static final java.util.concurrent.atomic.AtomicReference<String> FIRST_ERR =
+            new java.util.concurrent.atomic.AtomicReference<>();
 
     record Result(long ok, long err) {}
 
@@ -82,6 +86,10 @@ public class LoadGen {
                             }
                         } catch (Exception e) {
                             err.incrementAndGet();
+                            FIRST_ERR.compareAndSet(null, e.getClass().getName() + ": " + e.getMessage());
+                            // 백오프 없이 재시도하면 느린 앱이 에러 폭풍으로 바뀐다.
+                            // 그러면 재는 것이 처리량이 아니라 재시도 속도가 된다.
+                            try { Thread.sleep(20); } catch (InterruptedException ie) { break; }
                         }
                     }
                 });
@@ -99,12 +107,21 @@ public class LoadGen {
         return sorted[Math.max(0, Math.min(i, sorted.length - 1))] / 1000.0;
     }
 
+    /**
+     * 앱이 1 core 에서 포화되면 이 호출 자체가 실패한다.
+     * 부하가 멎은 뒤 몇 번 다시 시도하고, 그래도 안 되면 빈 값을 남긴다.
+     * <b>실패를 성공처럼 기록하지 않는 것이 요점이다.</b>
+     */
     private static String get(HttpClient http, String url) {
-        try {
-            return http.send(HttpRequest.newBuilder(URI.create(url)).GET().build(),
-                    HttpResponse.BodyHandlers.ofString()).body().replaceAll("\s+", "");
-        } catch (Exception e) {
-            return "{}";
+        for (int i = 0; i < 5; i++) {
+            try {
+                return http.send(HttpRequest.newBuilder(URI.create(url))
+                                .timeout(Duration.ofSeconds(20)).GET().build(),
+                        HttpResponse.BodyHandlers.ofString()).body().replaceAll("\s+", "");
+            } catch (Exception e) {
+                try { Thread.sleep(2000); } catch (InterruptedException ie) { break; }
+            }
         }
+        return "UNAVAILABLE";
     }
 }
