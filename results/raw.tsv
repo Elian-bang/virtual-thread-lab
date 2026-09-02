@@ -1,1 +1,2 @@
-VIRTUAL conc=100 conn=50 sync=false cpus=1 path=/send carrier=0 pinned=8 RESULT tps=39.6 ok=594 err=0 p50=1804.6 p95=7626.5 p99=7659.7 stat={"threadCount":21,"peakThreadCount":22,"connAcquireCount":1734,"connAcquireMeanMs":0.013071259515570935,"connAcquireMaxMs":10.848567,"connPending":0.0,"connActive":0.0,"connMax":50.0}  rep=1 block=B
+CF conc=2000 conn=50 sync=false cpus=1 path=/sleep carrier=0 DIED oom=
+false rep=3 block=A

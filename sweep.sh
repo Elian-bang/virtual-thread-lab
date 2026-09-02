@@ -3,6 +3,16 @@
 set -u
 export MSYS_NO_PATHCONV=1
 OUT=results/raw.tsv
+
+# 스윕이 두 개 동시에 돌면 서로 CPU 를 다퉈서 값이 전부 못 쓰게 된다.
+# 실제로 한 번 그렇게 됐다 (results/raw_오염_동시실행.tsv).
+LOCK=results/.sweep.lock
+if ! mkdir "$LOCK" 2>/dev/null; then
+  echo "이미 다른 스윕이 돌고 있다. 중단한다." >&2
+  exit 1
+fi
+trap 'rmdir "$LOCK" 2>/dev/null || true' EXIT
+
 : > "$OUT"
 W=15; R=20
 
