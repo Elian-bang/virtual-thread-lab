@@ -1,0 +1,1 @@
+CF conc=500 conn=50 sync=false cpus=1 path=/sleep carrier=0 pinned=0 RESULT tps=250.1 ok=3751 err=426696 p50=204.1 p95=2588.3 p99=2738.8 stat={"threadCount":215,"peakThreadCount":215,"connAcquireCount":0,"connAcquireMeanMs":0.0,"connAcquireMaxMs":0.0,"connPending":0.0,"connActive":0.0,"connMax":50.0} rep=1 block=A
