@@ -1,0 +1,13 @@
+[0.540s][info][jfr,startup] Started recording 1. No limit specified, using maxsize=250MB as default.
+[0.540s][info][jfr,startup] 
+[0.540s][info][jfr,startup] Use jcmd 1 JFR.dump name=1 to copy recording data to file.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+
+ :: Spring Boot ::                (v3.3.4)
+

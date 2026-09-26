@@ -1,0 +1,2 @@
+vtlab-app-r2-39-E1 0.57% 378.6MiB / 1GiB
+vtlab-db 0.34% 565.2MiB / 2GiB

@@ -5,3 +5,9 @@ build/
 .vscode/
 .DS_Store
 *.log
+
+# 빌드 산출물 — 저장소에 두지 않는다 (재빌드 가능, 55MB)
+dist/
+
+# 실행 로그는 원자료다. 위의 *.log 규칙에서 되살린다
+!results/**/*.log

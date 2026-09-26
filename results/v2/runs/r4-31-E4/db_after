@@ -1,0 +1,9 @@
+Com_select	6270154
+Com_update	6251592
+Innodb_buffer_pool_wait_free	0
+Innodb_data_fsyncs	2490389
+Innodb_row_lock_time	173732328
+Innodb_row_lock_waits	1895712
+Questions	12547466
+Threads_connected	51
+Threads_running	2

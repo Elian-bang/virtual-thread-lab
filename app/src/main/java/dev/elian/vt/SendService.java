@@ -1,5 +1,6 @@
 package dev.elian.vt;
 
+import java.util.function.Supplier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -12,8 +13,8 @@ import org.springframework.stereotype.Service;
  *   ③ DB 기록      ← 커넥션 점유
  * </pre>
  *
- * <p><b>①③ 이 커넥션을 잡고 ② 가 오래 기다린다.</b>
- * 그래서 스레드만 늘리고 커넥션을 그대로 두면 ①③ 에서 줄을 선다. H2 는 이걸 잰다.
+ * <p>v2: 구간별 시간을 {@link Phases} 에 남기고, 락 범위를 {@link SyncMode} 로 나눈다.
+ * 락은 {@code synchronized} 로 건다 — JDK 21 에서 monitor 가 pinning 을 만드는지 보는 것이 H3 의 목적이라서다.
  */
 @Service
 public class SendService {
@@ -21,36 +22,54 @@ public class SendService {
     private final JdbcTemplate jdbc;
     private final Channel channel;
     private final Knobs knobs;
+    private final Phases phases;
     private final Object lock = new Object();
 
-    public SendService(JdbcTemplate jdbc, Channel channel, Knobs knobs) {
+    public SendService(JdbcTemplate jdbc, Channel channel, Knobs knobs, Phases phases) {
         this.jdbc = jdbc;
         this.channel = channel;
         this.knobs = knobs;
+        this.phases = phases;
     }
 
     public void send(long targetId) {
-        if (knobs.useSync()) {
-            // H3 전용. Java 21 에서 synchronized 안의 블로킹은 캐리어 스레드를 pin 한다.
+        if (knobs.sync() == SyncMode.GLOBAL_ALL) {
+            long w0 = System.nanoTime();
             synchronized (lock) {
-                doSend(targetId);
+                phases.lockWait(System.nanoTime() - w0);
+                doSend(targetId, false);
             }
         } else {
-            doSend(targetId);
+            doSend(targetId, knobs.sync() == SyncMode.GLOBAL_JDBC);
         }
     }
 
-    private void doSend(long targetId) {
+    private void doSend(long targetId, boolean lockJdbc) {
         // ① 대상 조회 — 커넥션을 잡는다
-        String addr = jdbc.queryForObject(
-                "SELECT address FROM target WHERE id = ?", String.class, targetId);
+        String addr = db(lockJdbc, () -> jdbc.queryForObject(
+                "SELECT address FROM target WHERE id = ?", String.class, targetId));
 
-        // ② 외부 채널 — 커넥션을 놓은 상태로 기다린다
+        // ② 외부 채널 — 커넥션을 놓은 상태로 기다린다 (락 밖)
+        long c0 = System.nanoTime();
         channel.send(knobs.channelMs());
+        phases.channel(System.nanoTime() - c0);
 
         // ③ 결과 기록 — 다시 커넥션을 잡는다
-        jdbc.update("UPDATE target SET sent_count = sent_count + 1 WHERE id = ?", targetId);
+        db(lockJdbc, () -> jdbc.update("UPDATE target SET sent_count = sent_count + 1 WHERE id = ?", targetId));
 
         if (addr == null) throw new IllegalStateException("target " + targetId + " 없음");
+    }
+
+    private <T> T db(boolean lockJdbc, Supplier<T> call) {
+        if (!lockJdbc) {
+            long d0 = System.nanoTime();
+            try { return call.get(); } finally { phases.db(System.nanoTime() - d0); }
+        }
+        long w0 = System.nanoTime();
+        synchronized (lock) {
+            long d0 = System.nanoTime();
+            phases.lockWait(d0 - w0);
+            try { return call.get(); } finally { phases.db(System.nanoTime() - d0); }
+        }
     }
 }

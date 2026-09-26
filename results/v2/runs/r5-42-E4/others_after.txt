@@ -1,0 +1,2 @@
+vtlab-app-r5-42-E4 0.44% 245MiB / 1GiB
+vtlab-db 1.82% 593MiB / 2GiB

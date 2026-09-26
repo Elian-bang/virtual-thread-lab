@@ -1,0 +1,2 @@
+vtlab-app-r1-16-E3 0.64% 232.8MiB / 1GiB
+vtlab-db 0.65% 527.3MiB / 2GiB

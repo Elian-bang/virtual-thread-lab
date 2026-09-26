@@ -30,7 +30,7 @@ lab:
   model: ${LAB_MODEL:PLATFORM}
   pool-size: ${LAB_POOL:200}
   channel-ms: ${LAB_CHANNEL_MS:50}
-  use-sync: ${LAB_SYNC:false}
+  sync: ${LAB_SYNC:NONE}          # NONE | GLOBAL_ALL | GLOBAL_JDBC
   targets: ${LAB_TARGETS:1000}
 
 management:

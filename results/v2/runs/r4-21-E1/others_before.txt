@@ -1,0 +1,2 @@
+vtlab-app-r4-21-E1 0.64% 162.5MiB / 1GiB
+vtlab-db 0.47% 587.6MiB / 2GiB

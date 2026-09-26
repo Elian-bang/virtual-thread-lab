@@ -1,0 +1,6 @@
+vtlab-app-rtest-1 0.60% 161.9MiB / 1GiB
+vtlab-db 0.43% 545.8MiB / 2GiB
+trade-diary-db 1.76% 40.38MiB / 31.23GiB
+insulation_web 0.00% 11.48MiB / 31.23GiB
+insulation_pma 0.00% 15.11MiB / 31.23GiB
+insulation_db 0.07% 89.31MiB / 31.23GiB

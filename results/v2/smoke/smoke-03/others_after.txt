@@ -1,0 +1,6 @@
+vtlab-app-smoke-03 0.43% 233.4MiB / 1GiB
+vtlab-db 1.85% 528.8MiB / 2GiB
+trade-diary-db 0.00% 40.03MiB / 31.23GiB
+insulation_web 0.00% 11.48MiB / 31.23GiB
+insulation_pma 0.00% 15.11MiB / 31.23GiB
+insulation_db 0.04% 89.31MiB / 31.23GiB

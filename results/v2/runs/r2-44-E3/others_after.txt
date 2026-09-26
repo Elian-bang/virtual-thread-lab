@@ -1,0 +1,2 @@
+vtlab-app-r2-44-E3 0.46% 221.4MiB / 1GiB
+vtlab-db 1.35% 566.4MiB / 2GiB

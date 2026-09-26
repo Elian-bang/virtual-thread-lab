@@ -1,0 +1,2 @@
+vtlab-app-r5-46-E1 0.94% 336.5MiB / 1GiB
+vtlab-db 0.77% 593.1MiB / 2GiB

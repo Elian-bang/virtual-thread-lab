@@ -1,0 +1,2 @@
+vtlab-app-r2-22-E2 0.55% 170.3MiB / 1GiB
+vtlab-db 0.48% 558.1MiB / 2GiB

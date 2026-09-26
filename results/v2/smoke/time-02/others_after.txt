@@ -1,0 +1,6 @@
+vtlab-app-time-02 12.91% 335.6MiB / 1GiB
+vtlab-db 12.45% 542.1MiB / 2GiB
+trade-diary-db 1.90% 40.1MiB / 31.23GiB
+insulation_web 0.00% 11.48MiB / 31.23GiB
+insulation_pma 0.00% 15.11MiB / 31.23GiB
+insulation_db 0.06% 89.31MiB / 31.23GiB

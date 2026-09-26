@@ -20,20 +20,23 @@ public class SendController {
     private final Knobs knobs;
     private final ExecutorService cfPool;
     private final Channel channel;
+    private final Phases phases;
     private final int targets;
 
-    public SendController(SendService service, Knobs knobs, ExecutorService cfPool, Channel channel,
+    public SendController(SendService service, Knobs knobs, ExecutorService cfPool, Channel channel, Phases phases,
                           @org.springframework.beans.factory.annotation.Value("${lab.targets:1000}") int targets) {
         this.service = service;
         this.knobs = knobs;
         this.cfPool = cfPool;
         this.channel = channel;
+        this.phases = phases;
         this.targets = targets;
     }
 
     @GetMapping("/send")
     public ResponseEntity<String> send(@RequestParam(defaultValue = "0") long seq) {
         long id = (seq % targets) + 1;
+        long t0 = System.nanoTime();
 
         if (knobs.model() == Model.CF) {
             // 비동기지만 결국 같은 플랫폼 풀 위에서 돈다.
@@ -43,6 +46,7 @@ public class SendController {
             // PLATFORM 과 VIRTUAL 은 Tomcat 이 무엇으로 요청을 받느냐만 다르다.
             service.send(id);
         }
+        phases.total(System.nanoTime() - t0);
         return ResponseEntity.ok("ok");
     }
 
@@ -58,7 +62,11 @@ public class SendController {
      */
     @GetMapping("/sleep")
     public ResponseEntity<String> sleep() {
+        long t0 = System.nanoTime();
         channel.send(knobs.channelMs());
+        long n = System.nanoTime() - t0;
+        phases.channel(n);
+        phases.total(n);
         return ResponseEntity.ok("ok");
     }
 
